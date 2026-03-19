@@ -140,9 +140,16 @@ Fathom Mode is built for **complex, ambiguous, high-stakes tasks** where getting
 
 ### OpenClaw integration
 
+**macOS / Linux:**
 ```bash
 pip3 install "fathom-mode[openclaw] @ git+https://github.com/ma-ziwei/fathom-mode.git"
 python3 -m ftg install-openclaw
+```
+
+**Windows:**
+```powershell
+py -m pip install "fathom-mode[openclaw] @ git+https://github.com/ma-ziwei/fathom-mode.git"
+py -m ftg install-openclaw
 ```
 
 Then in any OpenClaw chat, say **"fathom mode"** to activate.

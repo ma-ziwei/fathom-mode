@@ -67,8 +67,12 @@ def _openclaw_candidate_paths(*parts: str) -> list[Path]:
     paths: list[Path] = []
     for base in candidates:
         candidate = base.joinpath(*parts)
-        if candidate.exists():
-            paths.append(candidate)
+        try:
+            if candidate.exists():
+                paths.append(candidate)
+        except OSError:
+            # WSL paths may intermittently fail on Windows (WinError 64)
+            continue
     return paths
 
 
@@ -648,14 +652,17 @@ def cmd_relay(session_id: str | None, user_message: str):
 
 def cmd_install_openclaw():
     """Install Fathom Mode skill for OpenClaw."""
-    import shutil
     skill_src = Path(__file__).parent / "data" / "SKILL.md"
     if not skill_src.exists():
         print("Error: SKILL.md not found in package. Reinstall fathom-mode.")
         sys.exit(1)
     target_dir = Path.home() / ".openclaw" / "skills" / "fathom_mode"
     target_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(skill_src, target_dir / "SKILL.md")
+    content = skill_src.read_text(encoding="utf-8")
+    # Windows: python3 doesn't exist, use python instead
+    if sys.platform == "win32":
+        content = content.replace("python3 -m ftg", "python -m ftg")
+    (target_dir / "SKILL.md").write_text(content, encoding="utf-8")
     print("Fathom Mode skill installed for OpenClaw.")
     print("")
     print("Next steps:")

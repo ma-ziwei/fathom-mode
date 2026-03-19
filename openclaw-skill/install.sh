@@ -123,11 +123,11 @@ cp "$SKILL_FILE" "$TARGET_DIR/SKILL.md"
 # --- Step 4: Verify ---
 
 echo "[4/4] Verifying..."
-if python3 -m ftg relay --help >/dev/null 2>&1; then
+if python3 -m ftg list >/dev/null 2>&1; then
     echo "  fathom-mode works."
 else
     echo "Warning: fathom-mode may not be installed correctly."
-    echo "  Try running: python3 -m ftg relay --help"
+    echo "  Try running: python3 -m ftg list"
 fi
 
 echo ""

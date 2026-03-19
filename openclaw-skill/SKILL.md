@@ -12,7 +12,7 @@ metadata:
             {
               "id": "pip",
               "kind": "pip",
-              "package": "fathom-mode",
+              "package": "fathom-mode[openclaw]",
               "label": "Install Fathom Mode",
             },
           ],
