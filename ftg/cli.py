@@ -122,7 +122,10 @@ def _resolve_api_key(env_name: str, provider: str) -> str:
 def _sdk_available(module_name: str) -> bool:
     """Check if a Python SDK is importable without actually importing it."""
     from importlib.util import find_spec
-    return find_spec(module_name) is not None
+    try:
+        return find_spec(module_name) is not None
+    except (ModuleNotFoundError, ValueError):
+        return False
 
 
 def _configured_provider() -> str:
