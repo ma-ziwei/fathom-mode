@@ -1,0 +1,74 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fathom-mode"
+version = "0.1.0"
+description = "Reversible Intent Alignment Protocol — optimize AI input by fathoming human intent before generating."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "FtG Contributors" },
+]
+keywords = [
+    "ai", "intent-alignment", "prompt-engineering", "causal-reasoning",
+    "information-extraction", "human-ai-interaction",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "pydantic>=2.0",
+    "networkx>=3.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+anthropic = ["anthropic>=0.20"]
+openclaw = ["websocket-client>=1.0"]
+gemini = ["google-genai>=1.0"]
+causal = ["spacy>=3.5"]
+all = [
+    "openai>=1.0",
+    "anthropic>=0.20",
+    "websocket-client>=1.0",
+    "google-genai>=1.0",
+]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+fathom = "ftg.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ma-ziwei/fathom-mode"
+Documentation = "https://github.com/ma-ziwei/fathom-mode#readme"
+Repository = "https://github.com/ma-ziwei/fathom-mode"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ftg"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
