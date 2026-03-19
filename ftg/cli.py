@@ -647,20 +647,73 @@ def cmd_relay(session_id: str | None, user_message: str):
 # Main
 # ------------------------------------------------------------------
 
+def _is_wsl() -> bool:
+    """Detect if running inside WSL."""
+    try:
+        return "microsoft" in Path("/proc/version").read_text().lower()
+    except Exception:
+        return False
+
+
+def _install_skill_to(target_dir: Path, content: str) -> bool:
+    """Write SKILL.md to target_dir. Returns True on success."""
+    try:
+        target_dir.mkdir(parents=True, exist_ok=True)
+        (target_dir / "SKILL.md").write_text(content, encoding="utf-8")
+        return True
+    except OSError:
+        return False
+
+
 def cmd_install_openclaw():
     """Install Fathom Mode skill for OpenClaw."""
     skill_src = Path(__file__).parent / "data" / "SKILL.md"
     if not skill_src.exists():
         print("Error: SKILL.md not found in package. Reinstall fathom-mode.")
         sys.exit(1)
-    target_dir = Path.home() / ".openclaw" / "skills" / "fathom_mode"
-    target_dir.mkdir(parents=True, exist_ok=True)
-    content = skill_src.read_text(encoding="utf-8")
-    # Windows: python3 doesn't exist, use python instead
+
+    content_unix = skill_src.read_text(encoding="utf-8")
+    content_win = content_unix.replace("python3 -m ftg", "python -m ftg")
+
+    # Primary install: always to current platform's home
+    primary_dir = Path.home() / ".openclaw" / "skills" / "fathom_mode"
     if sys.platform == "win32":
-        content = content.replace("python3 -m ftg", "python -m ftg")
-    (target_dir / "SKILL.md").write_text(content, encoding="utf-8")
+        _install_skill_to(primary_dir, content_win)
+    else:
+        _install_skill_to(primary_dir, content_unix)
     print("Fathom Mode skill installed for OpenClaw.")
+
+    # WSL cross-install (best-effort, failure is silent)
+    if sys.platform == "win32":
+        # Running on Windows: also install into WSL side
+        wsl_user = os.environ.get("FTG_OPENCLAW_WSL_USER", "ubuntu")
+        wsl_dir = Path(
+            rf"\\wsl.localhost\{OPENCLAW_WSL_DISTRO}\home\{wsl_user}"
+            r"\.openclaw\skills\fathom_mode"
+        )
+        if _install_skill_to(wsl_dir, content_unix):
+            print(f"  Also installed to WSL ({OPENCLAW_WSL_DISTRO}).")
+    elif _is_wsl():
+        # Running inside WSL: also install into Windows side
+        try:
+            win_user = os.environ.get("FTG_WIN_USER", "")
+            if not win_user:
+                # Auto-detect from /mnt/c/Users/
+                users_dir = Path("/mnt/c/Users")
+                if users_dir.exists():
+                    candidates = [
+                        d for d in users_dir.iterdir()
+                        if d.is_dir() and d.name not in ("Public", "Default", "Default User", "All Users")
+                    ]
+                    if len(candidates) == 1:
+                        win_user = candidates[0].name
+            if win_user:
+                win_dir = Path(f"/mnt/c/Users/{win_user}/.openclaw/skills/fathom_mode")
+                if _install_skill_to(win_dir, content_win):
+                    print(f"  Also installed to Windows side (C:\\Users\\{win_user}).")
+        except OSError:
+            pass
+
     print("")
     print("Next steps:")
     print("  1. Start a new conversation in your OpenClaw client")
