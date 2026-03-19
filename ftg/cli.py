@@ -146,26 +146,12 @@ def _configured_provider() -> str:
     if _read_openclaw_auth_profile("openai") and _sdk_available("openai"):
         return "openai"
 
-    # Fallback: try env-var keys even without SDK check (will fail with clear error)
-    if os.environ.get("GEMINI_API_KEY"):
-        return "gemini"
-    if os.environ.get("OPENAI_API_KEY"):
-        return "openai"
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        return "anthropic"
-    if os.environ.get("DEEPSEEK_API_KEY"):
-        return "deepseek"
-    if _read_openclaw_auth_profile("anthropic"):
-        return "anthropic"
-    if _read_openclaw_auth_profile("openai"):
-        return "openai"
-
     print(json.dumps({
         "error": (
-            "No LLM provider configured. Set FTG_LLM_PROVIDER plus a matching API key, "
-            "or export one of GEMINI_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY, "
-            "or DEEPSEEK_API_KEY. FtG can also reuse OpenClaw auth profiles for "
-            "Anthropic/OpenAI when present."
+            "No working LLM provider found. Install a provider SDK: "
+            "pip install \"fathom-mode[openai]\" or [gemini] or [anthropic]. "
+            "Then set the matching API key (OPENAI_API_KEY, GEMINI_API_KEY, etc.) "
+            "or configure an OpenClaw auth profile."
         )
     }))
     sys.exit(1)
