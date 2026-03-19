@@ -119,11 +119,34 @@ def _resolve_api_key(env_name: str, provider: str) -> str:
     print(json.dumps({"error": f"{env_name} not set"}))
     sys.exit(1)
 
+def _sdk_available(module_name: str) -> bool:
+    """Check if a Python SDK is importable without actually importing it."""
+    from importlib.util import find_spec
+    return find_spec(module_name) is not None
+
+
 def _configured_provider() -> str:
     provider = os.environ.get("FTG_LLM_PROVIDER", "").strip().lower()
     if provider and provider != "auto":
         return provider
 
+    # Env-var API keys — check SDK availability before selecting
+    if os.environ.get("GEMINI_API_KEY") and _sdk_available("google.genai"):
+        return "gemini"
+    if os.environ.get("OPENAI_API_KEY") and _sdk_available("openai"):
+        return "openai"
+    if os.environ.get("ANTHROPIC_API_KEY") and _sdk_available("anthropic"):
+        return "anthropic"
+    if os.environ.get("DEEPSEEK_API_KEY") and _sdk_available("openai"):
+        return "deepseek"
+
+    # OpenClaw auth profiles — also check SDK availability
+    if _read_openclaw_auth_profile("anthropic") and _sdk_available("anthropic"):
+        return "anthropic"
+    if _read_openclaw_auth_profile("openai") and _sdk_available("openai"):
+        return "openai"
+
+    # Fallback: try env-var keys even without SDK check (will fail with clear error)
     if os.environ.get("GEMINI_API_KEY"):
         return "gemini"
     if os.environ.get("OPENAI_API_KEY"):
@@ -175,7 +198,11 @@ def _make_deepseek_llm_fn():
 
 
 def _make_openai_llm_fn():
-    import openai
+    try:
+        import openai
+    except ImportError:
+        print(json.dumps({"error": "openai SDK not installed. Run: pip install fathom-mode[openai]"}))
+        sys.exit(1)
 
     api_key = _resolve_api_key("OPENAI_API_KEY", "openai")
 
@@ -201,7 +228,11 @@ def _make_openai_llm_fn():
 
 
 def _make_anthropic_llm_fn():
-    import anthropic
+    try:
+        import anthropic
+    except ImportError:
+        print(json.dumps({"error": "anthropic SDK not installed. Run: pip install fathom-mode[anthropic]"}))
+        sys.exit(1)
 
     api_key = _resolve_api_key("ANTHROPIC_API_KEY", "anthropic")
 
