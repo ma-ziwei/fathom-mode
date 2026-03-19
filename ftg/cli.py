@@ -172,7 +172,12 @@ def _configured_provider() -> str:
 
 
 def _make_gemini_llm_fn():
-    from ftg.contrib.gemini import GeminiBackend
+    try:
+        from ftg.contrib.gemini import GeminiBackend
+        from google import genai  # noqa: F401 — verify SDK is importable
+    except ImportError:
+        print(json.dumps({"error": "google-genai SDK not installed. Run: pip install fathom-mode[gemini]"}))
+        sys.exit(1)
 
     api_key = os.environ.get("GEMINI_API_KEY", "")
     if not api_key:
