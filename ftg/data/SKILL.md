@@ -10,8 +10,8 @@ metadata:
         "install":
           [
             {
-              "id": "pip",
-              "kind": "pip",
+              "id": "uv",
+              "kind": "uv",
               "package": "fathom-mode[openclaw]",
               "label": "Install Fathom Mode",
             },
