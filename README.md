@@ -141,7 +141,7 @@ Fathom Mode is built for **complex, ambiguous, high-stakes tasks** where getting
 ### OpenClaw integration
 
 ```bash
-pip3 install "fathom-mode[openai]"    # or [gemini], [anthropic]
+pip3 install "fathom-mode[openclaw]"
 python3 -m ftg install-openclaw
 
 # Then in any OpenClaw chat: say "fathom mode" to activate
