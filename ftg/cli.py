@@ -148,6 +148,8 @@ def _configured_provider() -> str:
         return "deepseek"
 
     # OpenClaw auth profiles — also check SDK availability
+    if _read_openclaw_auth_profile("gemini") and _sdk_available("google.genai"):
+        return "gemini"
     if _read_openclaw_auth_profile("anthropic") and _sdk_available("anthropic"):
         return "anthropic"
     if _read_openclaw_auth_profile("openai") and _sdk_available("openai"):
@@ -172,12 +174,7 @@ def _make_gemini_llm_fn():
         print(json.dumps({"error": "google-genai SDK not installed. Run: pip install fathom-mode[gemini]"}))
         sys.exit(1)
 
-    api_key = os.environ.get("GEMINI_API_KEY", "")
-    if not api_key:
-        print("FTG ERROR: GEMINI_API_KEY not set", file=sys.stderr)
-        print(json.dumps({"error": "GEMINI_API_KEY not set"}))
-        sys.exit(1)
-
+    api_key = _resolve_api_key("GEMINI_API_KEY", "gemini")
     model = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
     backend = GeminiBackend(api_key=api_key, model=model)
     return backend.call
