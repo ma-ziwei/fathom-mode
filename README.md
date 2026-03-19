@@ -27,7 +27,7 @@ Why? When your input is vague, LLMs hedge — they generate long, generic respon
 ## Quick start
 
 ```bash
-pip install "fathom-mode[openai]"     # or [gemini], [anthropic]
+pip install "fathom-mode[openai] @ git+https://github.com/ma-ziwei/fathom-mode.git"
 ```
 
 ```python
@@ -141,11 +141,11 @@ Fathom Mode is built for **complex, ambiguous, high-stakes tasks** where getting
 ### OpenClaw integration
 
 ```bash
-pip3 install "fathom-mode[openclaw]"
+pip3 install "fathom-mode[openclaw] @ git+https://github.com/ma-ziwei/fathom-mode.git"
 python3 -m ftg install-openclaw
-
-# Then in any OpenClaw chat: say "fathom mode" to activate
 ```
+
+Then in any OpenClaw chat, say **"fathom mode"** to activate.
 
 ### Relay protocol (for custom agents)
 
