@@ -770,6 +770,10 @@ def main():
         cmd_status(_clean_session_id(sys.argv[2]))
 
     elif cmd == "relay":
+        if "--help" in sys.argv[2:] or "-h" in sys.argv[2:]:
+            print("Usage: python3 -m ftg relay [--session ID] <message>")
+            print("  Relay a user message through Fathom Mode and return JSON.")
+            sys.exit(0)
         session_id = None
         args = sys.argv[2:]
         if "--session" in args:

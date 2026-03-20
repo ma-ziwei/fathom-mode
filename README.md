@@ -3,7 +3,7 @@
 **Your AI answers before it understands. Fathom Mode fixes that.**
 
 [![PyPI version](https://img.shields.io/pypi/v/fathom-mode)](https://pypi.org/project/fathom-mode/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Fathom Mode is an intent compiler for AI. It sits between your user and your LLM, asking targeted questions to understand what the user *actually* wants — then compiles that understanding into a structured prompt that any model can execute precisely.
